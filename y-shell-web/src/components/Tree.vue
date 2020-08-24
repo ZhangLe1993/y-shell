@@ -153,12 +153,12 @@ export default {
       this.connectFormVisible = true;
       this.connectTitle = '新增连接';
       // form 重置
-      this.connectForm = {id: 0, name: '', description: '', authMethod: 'password', config : { host : '', port : '', user : '', password : '', identity : '', passphrase : '' }};
+      this.connectForm = {id: 0, name: '', description: '', config : { host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' }};
     },
     handleEditNode() {
       this.connectFormVisible = true;
       this.connectTitle = '编辑连接';
-      this.folderForm = {id : this.currentClickNodeData.id, name: this.currentClickNodeData.name, description: this.currentClickNodeData.description, config : { host : '', port : '', user : '', password : '', authMethod : 'password', identity : '', passphrase : '' }};
+      this.connectForm = {id : this.currentClickNodeData.id, name: this.currentClickNodeData.name, description: this.currentClickNodeData.description, config : this.currentClickNodeData.config};
     },
     handleDeleteNode() {
       console.log('删除链接');

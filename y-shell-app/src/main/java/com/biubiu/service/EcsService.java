@@ -1,8 +1,10 @@
 package com.biubiu.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.biubiu.core.common.Const;
 import com.biubiu.dao.EcsDao;
 import com.biubiu.dto.Node;
+import com.biubiu.model.Remote;
 import com.biubiu.pojo.Ecs;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +29,12 @@ public class EcsService {
     private List<Node> recursion(List<Ecs> list, Long targetId) {
         List<Node> target = new ArrayList<>();
         List<Ecs> filters = list.stream().filter(v -> v.getParentId().equals(targetId)).collect(Collectors.toList());
-        for (Ecs ssh : filters) {
+        for (Ecs ecs : filters) {
             Node node = new Node();
-            Long id = ssh.getId();
+            Long id = ecs.getId();
             node.setId(id);
-            node.setName(ssh.getName());
-            String type = ssh.getType();
+            node.setName(ecs.getName());
+            String type = ecs.getType();
             node.setType(type);
             if (Const.FOLDER.equalsIgnoreCase(type)) {
                 node.setIcon(Const.FOLDER_ICON);
@@ -41,6 +43,9 @@ public class EcsService {
                 node.setChildren(children);
             } else {
                 node.setIcon(Const.LEAF_ICON);
+                String config = ecs.getConfig();
+                Remote remote = JSONObject.parseObject(config, Remote.class);
+                node.setConfig(remote);
             }
             target.add(node);
         }

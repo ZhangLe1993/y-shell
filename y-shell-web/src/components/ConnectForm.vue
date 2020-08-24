@@ -24,17 +24,17 @@
       </el-form-item>
 
       <el-form-item label="验证方式" :label-width="formLabelWidth">
-        <el-select v-model="form.authMethod" placeholder="请选择验证方式">
+        <el-select v-model="form.config.authMethod" placeholder="请选择验证方式">
           <el-option label="密码" value="password"></el-option>
           <el-option label="密钥" value="rsa"></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item v-if=" form.authMethod ==='password' " label="密码" :label-width="formLabelWidth" prop="password">
+      <el-form-item v-if=" form.config.authMethod ==='password' " label="密码" :label-width="formLabelWidth" prop="password">
         <el-input v-model="form.config.password" auto-complete="off"></el-input>
       </el-form-item>
 
-      <el-row v-if=" form.authMethod ==='rsa' ">
+      <el-row v-if=" form.config.authMethod ==='rsa' ">
         <el-col :span="18">
           <el-form-item label="选择文件" :label-width="formLabelWidth">
             <el-select v-model="form.config.identity" filterable placeholder="选择已上传的密钥文件">
@@ -50,7 +50,7 @@
               :before-remove="beforeRemove"
               :before-upload="beforeUpload"
               multiple
-              show-file-list="false"
+              :show-file-list="false"
               :limit="1"
               :on-exceed="handleExceed"
           >
@@ -130,7 +130,7 @@ export default {
             formData.config = JSON.stringify(formData.config);
             console.log(formData);
             // 新增
-            /*that.$api.post('/ecs', JSON.stringify(formData), (res) => {
+            that.$api.post('/ecs', JSON.stringify(formData), (res) => {
               if(res !== undefined && res.status !== undefined && res.status === 200) {
                 this.openLayer('消息', '恭喜你，新增成功。', 'success');
                 // 关闭弹出层
@@ -139,9 +139,10 @@ export default {
               } else {
                 this.openLayer('消息', res.data, 'error');
               }
-            });*/
+            });
           } else {
             // 更新
+            formData.config = JSON.stringify(formData.config);
             that.$api.put('/ecs', JSON.stringify(formData), (res) => {
               console.log(res);
               if(res !== undefined && res.status !== undefined && res.status === 200) {
