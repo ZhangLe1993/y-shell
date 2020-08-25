@@ -150,15 +150,15 @@ export default {
       console.log('删除文件夹');
     },
     handleAddConnect() {
-      this.connectFormVisible = true;
       this.connectTitle = '新增连接';
       // form 重置
       this.connectForm = {id: 0, name: '', description: '', config : { host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' }};
+      this.connectFormVisible = true;
     },
     handleEditNode() {
-      this.connectFormVisible = true;
       this.connectTitle = '编辑连接';
       this.connectForm = {id : this.currentClickNodeData.id, name: this.currentClickNodeData.name, description: this.currentClickNodeData.description, config : this.currentClickNodeData.config};
+      this.connectFormVisible = true;
     },
     handleDeleteNode() {
       console.log('删除链接');

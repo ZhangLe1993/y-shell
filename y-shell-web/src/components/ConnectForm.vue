@@ -8,18 +8,18 @@
 
       <el-row>
         <el-col :span="16">
-            <el-form-item label="主机地址" :label-width="formLabelWidth">
+            <el-form-item label="主机地址" :label-width="formLabelWidth" prop="host">
               <el-input v-model="form.config.host" auto-complete="off"></el-input>
             </el-form-item>
         </el-col>
         <el-col :span="8">
-            <el-form-item label="端口号" :label-width="formLabelWidth">
+            <el-form-item label="端口号" :label-width="formLabelWidth" prop="port">
               <el-input v-model="form.config.port" auto-complete="off"></el-input>
             </el-form-item>
         </el-col>
       </el-row>
 
-      <el-form-item label="用户名" :label-width="formLabelWidth">
+      <el-form-item label="用户名" :label-width="formLabelWidth" prop="user">
         <el-input v-model="form.config.user" auto-complete="off"></el-input>
       </el-form-item>
 
@@ -36,7 +36,7 @@
 
       <el-row v-if=" form.config.authMethod ==='rsa' ">
         <el-col :span="18">
-          <el-form-item label="选择文件" :label-width="formLabelWidth">
+          <el-form-item label="选择文件" :label-width="formLabelWidth" prop="identity">
             <el-select v-model="form.config.identity" filterable placeholder="选择已上传的密钥文件">
               <el-option v-for="item in rsaOptions" :key="item" :label="item" :value="item"> </el-option>
             </el-select>
@@ -44,15 +44,14 @@
         </el-col>
         <el-col :span="6">
           <el-upload
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :before-remove="beforeRemove"
+              :action="uploadUrl()"
               :before-upload="beforeUpload"
               multiple
               :show-file-list="false"
               :limit="1"
               :on-exceed="handleExceed"
+              :on-success="handleSuccess"
+              :on-progress="uploadProcess"
           >
             <el-button size="medium" type="primary">点击上传</el-button>
           </el-upload>
@@ -94,10 +93,28 @@ export default {
           { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: 'blur' }
         ],
         description: [
-          { min: 0, max: 500, message: '长度在 0 到 500 个字符', trigger: 'blur' }
+          { min: 0, max: 500, message: '长度在 0 到 500 个字符', trigger: 'blur' },
+        ],
+        host: [
+          { required: true, message: '请输入主机地址', trigger: 'change' },
+          { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'change' }
+        ],
+        port: [
+          { required: true, message: '请输入端口号', trigger: 'change' },
+          { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'change' }
+        ],
+        user: [
+          { required: true, message: '请输入用户名', trigger: 'change' },
+          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'change' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'change' },
+        ],
+        identity: [
+          { required: true, message: '请选择密钥文件', trigger: 'change' },
         ],
       },
-      rsaOptions: ['~/.ssh/id_rsa', '/data/y_shell/id_rsa'],
+      rsaOptions: ['~/.ssh/id_rsa', '/data/y-shell/id_rsa'],
     }
   },
   methods: {
@@ -116,7 +133,7 @@ export default {
       }
     },
     onSubmit(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
           const that = this;
           const formData = that.form;
@@ -164,28 +181,48 @@ export default {
     onCancel() {
       this.cancel();
     },
+    uploadUrl() {
+      return 'http://127.0.0.1:8082/rsa/upload?host=' + this.form.config.host;
+    },
     // 文件上传
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    handleSuccess(res, file) {
+      this.imgFlag = false;
+      this.percent = 0;
+      if (res) {
+        this.imageUrl = URL.createObjectURL(file.raw); // 项目中用后台返回的真实地址
+      } else {
+        this.$message.error('视频上传失败，请重新上传！');
+      }
     },
-    handlePreview(file) {
-      console.log(file);
+    // eslint-disable-next-line no-unused-vars
+    uploadProcess(event, file, fileList) {
+      this.imgFlag = true;
+      console.log(event.percent);
+      this.percent = Math.floor(event.percent);
     },
-    beforeUpload() {
-      console.log('执行');
+    beforeUpload(file) {
+      console.log('文件校验');
       if(this.form.config === undefined || this.form.config.host === null || this.form.config.host === '' ) {
         this.$message.warning(`请填写连接主机，将根据连接的主机进行文件夹的创建`);
-        return;
+        return false;
       }
-      //
+      const limit = file.size / 1024 / 1024  < 1;
+      if ('rsa'.indexOf(file.type) === -1) {
+        this.$message.error('请上传正确的文件格式');
+        return false;
+      }
+      if (!limit) {
+        this.$message.error('RSA文件不能超过1MB哦!');
+        return false;
+      }
     },
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
-    beforeRemove(file, fileList) {
-      console.log(fileList);
-      return this.$confirm(`确定移除 ${ file.name }？`);
-    }
+
+  },
+  mounted() {
+    // this.form = {id: 0, name: '', description: '', config : { host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' }};
   }
 }
 </script>
