@@ -9,5 +9,7 @@ public class Const {
 
     public final static String LEAF_ICON = "el-icon-tickets";
 
-    public final static String upload = "~/upload/y-shell/";
+    public final static String upload = "/home/yinyue/upload/y-shell/";
+
+    public final static String AUTH_METHOD = "rsa";
 }

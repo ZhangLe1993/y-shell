@@ -25,7 +25,7 @@
       </el-form-item>
 
       <el-form-item label="验证方式" :label-width="formLabelWidth">
-        <el-select v-model="form.authMethod" placeholder="请选择验证方式">
+        <el-select v-model="form.authMethod" placeholder="请选择验证方式" @change="chooseMethod">
           <el-option label="密码" value="password"></el-option>
           <el-option label="密钥" value="rsa"></el-option>
         </el-select>
@@ -98,20 +98,17 @@ export default {
         ],
         host: [
           { required: true, message: '请输入主机地址', trigger: 'blur' },
-          { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
         port: [
           { required: true, message: '请输入端口号', trigger: 'blur' },
-          { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }
         ],
         user: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
         ],
         password: [{required: true, message: '请输入密码', trigger: 'blur' },],
         identity: [{ required: true, message: '请选择密钥文件', trigger: 'change' },],
       },
-      rsaOptions: ['~/.ssh/id_rsa', '/data/y-shell/id_rsa'],
+      rsaOptions: [],
     }
   },
   methods: {
@@ -177,6 +174,12 @@ export default {
         }
       });
     },
+    async chooseMethod(value) {
+      if(value === 'rsa') {
+        const res = await this.initRsaList();
+        this.rsaOptions = res.data;
+      }
+    },
     onCancel() {
       this.cancel();
     },
@@ -184,20 +187,17 @@ export default {
       return 'http://127.0.0.1:8082/rsa/upload?host=' + this.form.host;
     },
     // 文件上传
-    handleSuccess(res, file) {
-      this.imgFlag = false;
-      this.percent = 0;
-      if (res) {
-        this.imageUrl = URL.createObjectURL(file.raw); // 项目中用后台返回的真实地址
-      } else {
-        this.$message.error('视频上传失败，请重新上传！');
+    // eslint-disable-next-line no-unused-vars
+    async handleSuccess(res, file) {
+      if(this.form.authMethod === 'rsa') {
+        const res = await this.initRsaList();
+        this.rsaOptions = res.data;
+        this.openLayer('消息', '文件上传成功, 密钥文件列表已刷新', 'success');
       }
     },
     // eslint-disable-next-line no-unused-vars
     uploadProcess(event, file, fileList) {
-      this.imgFlag = true;
-      console.log(event.percent);
-      this.percent = Math.floor(event.percent);
+
     },
     beforeUpload(file) {
       console.log('文件校验');
@@ -218,10 +218,19 @@ export default {
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
+    async initRsaList() {
+      const that = this;
+      return await that.$api.syncGet('/rsa/list', { host : this.form.host });
+    }
 
   },
-  mounted() {
-    // this.form = {id: 0, name: '', description: '', config : { host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' }};
+  async mounted() {
+    if(this.form.host === undefined || this.form.host === null || this.form.host === '') {
+      this.rsaOptions = [];
+    } else {
+      const res = await this.initRsaList();
+      this.rsaOptions = res.data;
+    }
   }
 }
 </script>

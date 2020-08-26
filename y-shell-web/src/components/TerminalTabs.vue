@@ -10,18 +10,18 @@
     >
       <!--{{item.content}}-->
       <LatestUsed v-if="item.name === '1'"></LatestUsed>
-      <XTerm  v-if="item.name !== '1'" :ref="item.name" :divId="item.divId" :node="item.node"></XTerm>
+      <BaseTerm  v-if="item.name !== '1'" :ref="item.name" :divId="item.divId" :node="item.node"></BaseTerm>
     </el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
-import XTerm from '../components/BaseTerm';
+import BaseTerm from '../components/BaseTerm';
 import LatestUsed from '../components/LatestUsed';
 export default {
   name: "TerminalTabs",
   components: {
-    XTerm: XTerm,
+    BaseTerm: BaseTerm,
     LatestUsed: LatestUsed,
   },
   data() {
@@ -43,7 +43,7 @@ export default {
       console.log(node);
       let newTabName = ++this.tabIndex + '';
       this.editableTabs.push({
-        title: node.name + '-' + node.host,
+        title: node.name + '-' + node.config.host,
         name: newTabName,
         closable: true,
         divId: "terminal_" + newTabName,

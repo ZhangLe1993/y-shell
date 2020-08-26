@@ -62,7 +62,7 @@ export default {
     open: function() {
       console.log("socket连接成功");
       this.initXterm();
-      this.socket.onsend(JSON.stringify({type:"connect",data: {user: this.node.user, host:this.node.host, port: this.node.port}})); //转换为字符串
+      this.socket.onsend(JSON.stringify({type:"connect",data: this.node.id })); //转换为字符串
     },
     error: function() {
       console.log("连接错误");
@@ -80,7 +80,7 @@ export default {
     }
   },
   mounted() {
-    let url ="ws://" + location.host + "/terminal";
+    let url ="ws://127.0.0.1:8082/terminal";
     this.init(url);
   },
 };

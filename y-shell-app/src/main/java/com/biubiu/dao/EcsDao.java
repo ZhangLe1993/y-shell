@@ -69,6 +69,11 @@ public interface EcsDao {
     List<Ecs> list();
 
     @Select({
+            "select * from ecs where id = #{id} limit 0, 1"
+    })
+    Ecs findById(@Param("id") Long id);
+
+    @Select({
             "select * from ecs where id = #{id}"
     })
     List<Ecs> listById(@Param("id") Long id);

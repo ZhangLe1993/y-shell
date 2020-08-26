@@ -1,4 +1,4 @@
-package com.biubiu;
+package com.biubiu.core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
