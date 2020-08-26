@@ -1,6 +1,6 @@
 package com.biubiu.service;
 
-import com.biubiu.controller.EcsController;
+import com.biubiu.core.common.Const;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class RsaService {
         assert fileName != null;
         // String suffixName = fileName.substring(fileName.lastIndexOf("."));
         // logger.info("前椎名: {}", suffixName);
-        String path = "/home/yinyue/upload/y-shell/" + host + "/";
+        String path = Const.upload + host + "/";
         // String path = filePath + fileName;
         File folder = new File(path);
         if (!folder.exists()) {

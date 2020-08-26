@@ -72,7 +72,13 @@ export default {
         id: 0,
         name: '',
         description: '',
-        config: {},
+        host: '',
+        port : '',
+        user : '',
+        password : '',
+        identity : '',
+        passphrase : '',
+        authMethod: 'password',
       },
       isItemClick: false,
       isNodeClick: false,
@@ -152,12 +158,12 @@ export default {
     handleAddConnect() {
       this.connectTitle = '新增连接';
       // form 重置
-      this.connectForm = {id: 0, name: '', description: '', config : { host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' }};
+      this.connectForm = {id: 0, name: '', description: '', host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' };
       this.connectFormVisible = true;
     },
     handleEditNode() {
       this.connectTitle = '编辑连接';
-      this.connectForm = {id : this.currentClickNodeData.id, name: this.currentClickNodeData.name, description: this.currentClickNodeData.description, config : this.currentClickNodeData.config};
+      this.connectForm = {id : this.currentClickNodeData.id, name: this.currentClickNodeData.name, description: this.currentClickNodeData.description, host : this.currentClickNodeData.config.host, port : this.currentClickNodeData.config.port, user : this.currentClickNodeData.config.user, password : this.currentClickNodeData.config.password, identity : this.currentClickNodeData.config.identity, passphrase : this.currentClickNodeData.config.passphrase,authMethod: 'password' };
       this.connectFormVisible = true;
     },
     handleDeleteNode() {
@@ -165,9 +171,11 @@ export default {
     },
     handleFolderFormCancel() {
       this.folderFormVisible = false;
+      this.folderForm = {id: 0, name: '', description: ''};
     },
     handleConnectFormCancel() {
       this.connectFormVisible = false;
+      this.connectForm = {id: 0, name: '', description: '', host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' };
     },
   },
   mounted() {
