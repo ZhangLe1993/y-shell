@@ -8,7 +8,6 @@
         :index="index"
         :closable="item.closable"
     >
-      <!--{{item.content}}-->
       <LatestUsed v-if="item.name === '1'"></LatestUsed>
       <BaseTerm  v-if="item.name !== '1'" :ref="item.name" :divId="item.divId" :node="item.node"></BaseTerm>
     </el-tab-pane>

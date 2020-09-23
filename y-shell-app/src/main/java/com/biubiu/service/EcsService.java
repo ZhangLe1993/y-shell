@@ -7,6 +7,8 @@ import com.biubiu.dto.Node;
 import com.biubiu.model.Remote;
 import com.biubiu.pojo.Ecs;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -52,14 +54,17 @@ public class EcsService {
         return target;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int insert(Ecs ecs) {
         return ecsDao.insert(ecs);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int update(Ecs ecs) {
         return ecsDao.update(ecs);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int delete(Long id) {
         List<Ecs> list = ecsDao.listById(id);
         Set<Long> toList = new HashSet<>();
@@ -83,15 +88,16 @@ public class EcsService {
         if(toList.size() == 0) {
             return;
         }
-        List<Ecs> list = ecsDao.listByIds(toList);
+        Set<Long> ids = new HashSet<>();
+        List<Ecs> list = ecsDao.listByParentIds(toList);
         for(Ecs ecs: list) {
             // 如论是文件夹还是节点都要加入到待删除队列中
             toDel.add(ecs.getId());
             if(Const.FOLDER.equalsIgnoreCase(ecs.getType())) {
-                toList.add(ecs.getId());
+                ids.add(ecs.getId());
             }
         }
-        recursion(toList, toDel);
+        recursion(ids, toDel);
     }
 
 }

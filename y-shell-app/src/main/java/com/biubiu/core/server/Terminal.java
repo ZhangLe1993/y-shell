@@ -12,9 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,21 +43,29 @@ public class Terminal {
     }
 
     public void openConnect(javax.websocket.Session wsSession) throws Exception {
-        if (Const.AUTH_METHOD.equalsIgnoreCase(remote.getAuthMethod()) && Files.exists(Paths.get(remote.getIdentity()))) {
-            jsch.addIdentity(remote.getIdentity(), remote.getPassphrase());
-        }
         log.info("user: {},host: {},port: {}, password: {}, identity: {}", remote.getUser(), remote.getHost(), remote.getPort(), remote.getPassword(), remote.getIdentity());
-        Session session = jsch.getSession(remote.getUser(), remote.getHost(), remote.getPort());
-        session.setPassword(remote.getPassword());
-        session.setConfig("StrictHostKeyChecking", "no");
-        // 跳过Kerberos身份验证
-        session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
-        session.connect(3000);
-        Channel channel = session.openChannel("shell");
-        this.inputStream = channel.getInputStream();
-        this.outputStream = channel.getOutputStream();
-        channel.connect(3000);
-        this.getResp(wsSession);
+        try{
+            // rsa验证方式
+            if (Const.AUTH_METHOD.equalsIgnoreCase(remote.getAuthMethod()) && Files.exists(Paths.get(remote.getIdentity()))) {
+                jsch.addIdentity(remote.getIdentity(), remote.getPassphrase());
+            }
+            Session session = jsch.getSession(remote.getUser(), remote.getHost(), remote.getPort());
+            // 密码验证方式设置密码
+            if(!Const.AUTH_METHOD.equalsIgnoreCase(remote.getAuthMethod())) {
+                session.setPassword(remote.getPassword());
+            }
+            session.setConfig("StrictHostKeyChecking", "no");
+            // 跳过Kerberos身份验证
+            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            session.connect(3000);
+            Channel channel = session.openChannel("shell");
+            this.inputStream = channel.getInputStream();
+            this.outputStream = channel.getOutputStream();
+            channel.connect(3000);
+            this.getResp(wsSession);
+        }catch (Exception e) {
+            this.send(wsSession, e.getMessage());
+        }
     }
 
     private void getResp(javax.websocket.Session wsSession) {
@@ -94,7 +100,7 @@ public class Terminal {
         try {
             session.getBasicRemote().sendText(message);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("", e);
         }
     }
 
@@ -107,7 +113,7 @@ public class Terminal {
             outputStream.flush();
             log.info(command);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("", e);
         }
 
     }

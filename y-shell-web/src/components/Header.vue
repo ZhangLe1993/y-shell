@@ -1,8 +1,8 @@
 <template>
   <el-row style="background-color: #009688;">
     <el-col :span="24">
-      <div style="padding:10px;">
-        <span style="text-align: left !important; margin-left:200px;letter-spacing:10px;font-size: 25px;color: #fff;font-family: Microsoft YaHei; font-weight: bold;font-style: italic;">瑶池开发者平台</span>
+      <div style="padding:10px;text-align:left;">
+        <span style="margin-left:200px;letter-spacing:10px;font-size: 25px;color: #fff;font-family: Microsoft YaHei; font-weight: bold;font-style: italic;">Y-SHELL</span>
       </div>
     </el-col>
     <!--<el-col :span="16">

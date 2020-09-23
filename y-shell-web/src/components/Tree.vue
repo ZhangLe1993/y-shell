@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="['box', theme]" ref="box" v-on:contextmenu.prevent="handleShow($event)" style="min-height: 700px">
+    <div :class="['box', theme]" ref="box" v-on:contextmenu.prevent="handleShow($event)" style="min-height: 785px">
       <el-tree
           class="filter-tree"
           :data="data"
@@ -154,6 +154,17 @@ export default {
     },
     handleDeleteFolder() {
       console.log('删除文件夹');
+      // 删除
+      const that = this;
+      that.$api.delete('/ecs', {id : this.currentClickNodeData.id}, (res) => {
+        if(res !== undefined && res.status !== undefined && res.status === 200) {
+          this.openLayer('消息', '恭喜你，删除成功。', 'success');
+          // 关闭弹出层
+          this.refresh();
+        } else {
+          this.openLayer('消息', res.data, 'error');
+        }
+      });
     },
     handleAddConnect() {
       this.connectTitle = '新增连接';
@@ -163,11 +174,22 @@ export default {
     },
     handleEditNode() {
       this.connectTitle = '编辑连接';
-      this.connectForm = {id : this.currentClickNodeData.id, name: this.currentClickNodeData.name, description: this.currentClickNodeData.description, host : this.currentClickNodeData.config.host, port : this.currentClickNodeData.config.port, user : this.currentClickNodeData.config.user, password : this.currentClickNodeData.config.password, identity : this.currentClickNodeData.config.identity, passphrase : this.currentClickNodeData.config.passphrase,authMethod: 'password' };
+      this.connectForm = {id : this.currentClickNodeData.id, name: this.currentClickNodeData.name, description: this.currentClickNodeData.description, host : this.currentClickNodeData.config.host, port : this.currentClickNodeData.config.port, user : this.currentClickNodeData.config.user, password : this.currentClickNodeData.config.password, identity : this.currentClickNodeData.config.identity, passphrase : this.currentClickNodeData.config.passphrase, authMethod: this.currentClickNodeData.config.authMethod };
       this.connectFormVisible = true;
     },
     handleDeleteNode() {
       console.log('删除链接');
+      // 删除
+      const that = this;
+      that.$api.delete('/ecs', {id : this.currentClickNodeData.id}, (res) => {
+        if(res !== undefined && res.status !== undefined && res.status === 200) {
+          this.openLayer('消息', '恭喜你，删除成功。', 'success');
+          // 关闭弹出层
+          this.refresh();
+        } else {
+          this.openLayer('消息', res.data, 'error');
+        }
+      });
     },
     handleFolderFormCancel() {
       this.folderFormVisible = false;
@@ -176,6 +198,20 @@ export default {
     handleConnectFormCancel() {
       this.connectFormVisible = false;
       this.connectForm = {id: 0, name: '', description: '', host : '', port : '', user : '', password : '', identity : '', passphrase : '',authMethod: 'password' };
+    },
+    openLayer(title, msg, type) {
+      if(type === 'error') {
+        this.$notify.error({
+          title: title,
+          message: msg
+        });
+      } else {
+        this.$notify({
+          title: title,
+          message: msg,
+          type: type
+        });
+      }
     },
   },
   mounted() {

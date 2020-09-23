@@ -25,7 +25,7 @@ export default {
       this.term = new Terminal({
         rendererType: "canvas", //渲染类型
         cols: 170,
-        rows: 40, //行数
+        rows: 47, //行数
         convertEol: true, //启用时，光标将设置为下一行的开头
         scrollback: 10, //终端中的回滚量
         disableStdin: false, //是否应禁用输入

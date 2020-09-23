@@ -7,7 +7,7 @@ public class Const {
 
     public final static String FOLDER_ICON = "el-icon-folder-opened";
 
-    public final static String LEAF_ICON = "el-icon-tickets";
+    public final static String LEAF_ICON = "el-icon-monitor";
 
     public final static String upload = "/home/yinyue/upload/y-shell/";
 

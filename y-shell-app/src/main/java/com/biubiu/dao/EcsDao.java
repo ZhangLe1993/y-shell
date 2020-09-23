@@ -88,6 +88,16 @@ public interface EcsDao {
     })
     List<Ecs> listByIds(@Param("ids") Set<Long> ids);
 
+    @Select({
+            "<script>",
+                "select * from ecs where parent_id in ",
+                "<foreach collection='ids' item='item' index='index' open='(' separator=',' close=')'>",
+                    "#{item}",
+                "</foreach>",
+            "</script>",
+    })
+    List<Ecs> listByParentIds(@Param("ids") Set<Long> ids);
+
     @Delete({
             "<script>",
                 "delete from ecs where id in ",
