@@ -32,7 +32,7 @@ export default {
         cursorStyle: "underline", //光标样式
         cursorBlink: true, //光标闪烁
         theme: {
-          foreground: "yellow", //字体
+          foreground: "#009688", //字体
           background: "#060101", //背景色
           cursor: "help" //设置光标
         }

@@ -11,7 +11,22 @@ export default {
   name: 'App',
   components: {
     Header: Header
-  }
+  },
+  created() {
+    setTimeout(() => {
+      window.L2Dwidget.init({
+        pluginRootPath: 'static/live2dw/',
+        pluginJsPath: 'lib/',
+        pluginModelPath: 'live2d-widget-model-haru_1/assets/',
+        tagMode: false,
+        debug: false,
+        model: { jsonPath: 'static/live2dw/live2d-widget-model-haru_1/assets/haru01.model.json' },
+        display: { position: 'right', width: 300, height: 600 },
+        mobile: { show: true },
+        log: false
+      })
+    }, 1000)
+  },
 }
 </script>
 <style>

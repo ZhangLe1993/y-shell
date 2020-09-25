@@ -24,6 +24,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:favicon.ico");
         registry.addResourceHandler("/*.html").addResourceLocations("classpath:/templates/dist/");
         registry.addResourceHandler("/js/**").addResourceLocations("classpath:/templates/dist/js/");
