@@ -80,7 +80,7 @@ export default {
     }
   },
   mounted() {
-    let url ="ws://127.0.0.1:8082/terminal";
+    let url ="ws://" + location.host + "/terminal";
     this.init(url);
   },
 };
