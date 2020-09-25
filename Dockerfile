@@ -1,6 +1,6 @@
 FROM docker.io/zhangyule1993/java-base:v1.0.0
 
-RUN npm install -g cnpm --registry=https://registry.npm.taobao.org
+# RUN npm install -g cnpm --registry=https://registry.npm.taobao.org
 
 ENV active $ACTIVE
 
