@@ -14,4 +14,25 @@
    
    ##### 连接管理
    ![1.png](./doc/ssh.png)
+   
+   #### 本地运行
+   ###### 下载代码
+    git clone https://github.com/ZhangLe1993/y-shell.git
+    
+   ###### 进入前端目录
+    cd y-shell
+    cd y-shell-web
+   ###### 安装依赖,有些可能需要手动依赖.在main.js中有注释.
+    cnpm install
+   ###### 编译打包
+    cnpm run build
+
+   ###### 运行springboot
+    执行springboot 的 Application方法
+    或者直接执行jar包
+    cd y-shell/out
+    java -Dfile.encoding=utf-8 -jar app.jar --spring.profiles.active=dev
+   
+    
+    
     
